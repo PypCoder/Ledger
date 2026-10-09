@@ -124,12 +124,17 @@ if predict_clicked:
 
     st.markdown("### Result")
 
+    st.markdown(theme.result_animation_html(is_approved), unsafe_allow_html=True)
+   
     result_html = theme.result_panel_html(
         label=f"{model_choice_label} — Decision",
         value_text=f"{decision_text}  ·  {final_prob:.1%} approval probability",
         is_approved=is_approved,
     )
     st.markdown(result_html, unsafe_allow_html=True)
+
+    if is_approved:
+        st.balloons()
 
     st.markdown("### Per-Model Breakdown")
     breakdown_df = pd.DataFrame({

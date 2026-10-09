@@ -260,3 +260,49 @@ def result_panel_html(label: str, value_text: str, is_approved: bool) -> str:
 
 def rule_html() -> str:
     return '<hr class="ledger-rule" />'
+
+def result_animation_html(is_approved: bool) -> str:
+    """Returns a small CSS-animated flourish shown alongside the result panel."""
+    if is_approved:
+        color = SAGE
+        return f"""
+        <div class="ledger-anim-wrap">
+            <svg class="ledger-anim-approve" width="64" height="64" viewBox="0 0 64 64">
+                <circle cx="32" cy="32" r="28" fill="none" stroke="{color}" stroke-width="3"
+                        stroke-dasharray="176" stroke-dashoffset="176" class="ledger-circle"/>
+                <path d="M20 33 L28 41 L45 23" fill="none" stroke="{color}" stroke-width="4"
+                      stroke-linecap="round" stroke-linejoin="round"
+                      stroke-dasharray="40" stroke-dashoffset="40" class="ledger-check"/>
+            </svg>
+        </div>
+        <style>
+            .ledger-anim-wrap {{ display: flex; justify-content: center; margin: 0.5rem 0 1rem 0; }}
+            .ledger-circle {{ animation: draw-circle 0.6s ease-out forwards; }}
+            .ledger-check {{ animation: draw-check 0.4s ease-out 0.5s forwards; }}
+            @keyframes draw-circle {{ to {{ stroke-dashoffset: 0; }} }}
+            @keyframes draw-check {{ to {{ stroke-dashoffset: 0; }} }}
+        </style>
+        """
+    else:
+        color = BRICK
+        return f"""
+        <div class="ledger-anim-wrap">
+            <svg class="ledger-anim-reject" width="64" height="64" viewBox="0 0 64 64">
+                <circle cx="32" cy="32" r="28" fill="none" stroke="{color}" stroke-width="3"
+                        stroke-dasharray="176" stroke-dashoffset="176" class="ledger-circle"/>
+                <line x1="23" y1="23" x2="41" y2="41" stroke="{color}" stroke-width="4"
+                      stroke-linecap="round" stroke-dasharray="26" stroke-dashoffset="26" class="ledger-x1"/>
+                <line x1="41" y1="23" x2="23" y2="41" stroke="{color}" stroke-width="4"
+                      stroke-linecap="round" stroke-dasharray="26" stroke-dashoffset="26" class="ledger-x2"/>
+            </svg>
+        </div>
+        <style>
+            .ledger-anim-wrap {{ display: flex; justify-content: center; margin: 0.5rem 0 1rem 0; opacity: 0; animation: fade-in 0.4s ease-out forwards; }}
+            .ledger-circle {{ animation: draw-circle 0.6s ease-out forwards; }}
+            .ledger-x1 {{ animation: draw-x 0.3s ease-out 0.5s forwards; }}
+            .ledger-x2 {{ animation: draw-x 0.3s ease-out 0.65s forwards; }}
+            @keyframes draw-circle {{ to {{ stroke-dashoffset: 0; }} }}
+            @keyframes draw-x {{ to {{ stroke-dashoffset: 0; }} }}
+            @keyframes fade-in {{ to {{ opacity: 1; }} }}
+        </style>
+        """

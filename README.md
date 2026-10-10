@@ -269,6 +269,15 @@ Training is done in [`Ledger.ipynb`](Ledger.ipynb), which covers EDA, preprocess
 - The three scikit-learn models are fitted on the full standardized training set.
 - Neural network: full-batch training for 500 epochs with Adam (learning rate 0.01) and binary cross-entropy, on 85% of the training set. The other 15% is a validation slice used to fit the temperature (1.0687) with L-BFGS.
 
+### Reproduce the training
+
+1. Download `loan_data.csv` from the [Kaggle dataset](https://www.kaggle.com/datasets/muhammadmusharraf444/loan-approval-dataset).
+2. Open `Ledger.ipynb` in Google Colab or Jupyter and place `loan_data.csv` in the same folder as the notebook.
+3. Run all cells from top to bottom. The first cell installs the required packages, including matplotlib and seaborn for the plots.
+4. The notebook writes the trained models, scaler, feature order, monotonic mask and `results_summary.csv` to `models_saved/`. Copy that folder into the repository root and run the app.
+
+Retraining with a different scikit-learn or PyTorch version can change the saved files slightly, so results may differ in the last decimal places.
+
 ### Monotonicity check
 
 The check sweeps each constrained feature across the scaled range -3 to 3 for one reference applicant and confirms the predicted probability never decreases. Both features pass, but the results differ:

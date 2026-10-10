@@ -46,6 +46,13 @@ def load_results_summary():
     except FileNotFoundError:
         return None
 
+def predict_one(models: dict, key: str, X_scaled: np.ndarray) -> np.ndarray:
+    """Probability of Approved from a single model only."""
+    if key == "mlp":
+        X_t = torch.tensor(X_scaled, dtype=torch.float32)
+        with torch.no_grad():
+            return models["mlp"].predict_proba(X_t, apply_temperature=True).numpy()
+    return models[key].predict_proba(X_scaled)[:, 1]
 
 def predict_all(models: dict, X_scaled: np.ndarray) -> dict:
     """Returns each model's probability of class 1 (Approved) for the input batch."""

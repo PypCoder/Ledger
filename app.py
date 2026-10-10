@@ -8,7 +8,7 @@ import pandas as pd
 
 import theme
 from preprocessing import preprocess_single_input
-from ensemble import load_all_models, load_results_summary, ensemble_predict
+from ensemble import load_all_models, load_results_summary, ensemble_predict, predict_one
 from config import (
     EDUCATION_OPTIONS, HOME_OWNERSHIP_OPTIONS, LOAN_INTENT_OPTIONS,
     GENDER_OPTIONS, YES_NO_OPTIONS, MODEL_DISPLAY_NAMES, DEFAULT_THRESHOLD,
@@ -114,53 +114,51 @@ if predict_clicked:
     }
 
     X_scaled = preprocess_single_input(raw_input, scaler, feature_columns)
-    per_model_probs, ensemble_prob, _ = ensemble_predict(models, X_scaled, threshold)
 
     model_key_lookup = {v: k for k, v in MODEL_DISPLAY_NAMES.items()}
-    if model_choice_label == "Ensemble (all 4)":
+    is_ensemble = model_choice_label == "Ensemble (all 4)"
+
+    if is_ensemble:
+        per_model_probs, ensemble_prob, _ = ensemble_predict(models, X_scaled, threshold)
         final_prob = float(ensemble_prob[0])
     else:
-        model_key = model_key_lookup[model_choice_label]
-        final_prob = float(per_model_probs[model_key][0])
+        final_prob = float(predict_one(models, model_key_lookup[model_choice_label], X_scaled)[0])
 
     is_approved = final_prob >= threshold
     decision_text = "Approved" if is_approved else "Rejected"
 
     st.markdown("### Result")
-
     st.markdown(theme.result_animation_html(is_approved), unsafe_allow_html=True)
-   
-    result_html = theme.result_panel_html(
-        label=f"{model_choice_label} — Decision",
-        value_text=f"{decision_text}  ·  {final_prob:.1%} approval probability",
-        is_approved=is_approved,
+    st.markdown(
+        theme.result_panel_html(
+            label=f"{model_choice_label} — Decision",
+            value_text=f"{decision_text}  ·  {final_prob:.1%} approval probability",
+            is_approved=is_approved,
+        ),
+        unsafe_allow_html=True,
     )
-    st.markdown(result_html, unsafe_allow_html=True)
-
     if is_approved:
         st.balloons()
 
-    st.markdown("### Per-Model Breakdown")
-    breakdown_df = pd.DataFrame({
-        "Model": list(MODEL_DISPLAY_NAMES.values()) + ["Ensemble (average)"],
-        "Approval probability": [
-            f"{per_model_probs['logistic_regression'][0]:.1%}",
-            f"{per_model_probs['decision_tree'][0]:.1%}",
-            f"{per_model_probs['random_forest'][0]:.1%}",
-            f"{per_model_probs['mlp'][0]:.1%}",
-            f"{ensemble_prob[0]:.1%}",
-        ],
-    })
-    st.table(breakdown_df.set_index("Model"))
-
-    st.markdown(
-        '<p class="ledger-caption">Probabilities are averaged with equal weight across '
-        "all four models. The neural network's output is temperature-scaled so its "
-        "confidence is calibrated before averaging — no single model dominates the "
-        "ensemble simply by being more extreme.</p>",
-        unsafe_allow_html=True,
-    )
-
+    if is_ensemble:
+        st.markdown("### Per-Model Breakdown")
+        breakdown_df = pd.DataFrame({
+            "Model": list(MODEL_DISPLAY_NAMES.values()) + ["Ensemble (average)"],
+            "Approval probability": [
+                f"{per_model_probs['logistic_regression'][0]:.1%}",
+                f"{per_model_probs['decision_tree'][0]:.1%}",
+                f"{per_model_probs['random_forest'][0]:.1%}",
+                f"{per_model_probs['mlp'][0]:.1%}",
+                f"{ensemble_prob[0]:.1%}",
+            ],
+        })
+        st.table(breakdown_df.set_index("Model"))
+        st.markdown(
+            '<p class="ledger-caption">Probabilities are averaged with equal weight across '
+            "all four models. The neural network's output is temperature-scaled so its "
+            "confidence is calibrated before averaging.</p>",
+            unsafe_allow_html=True,
+        )
 # ---------------------------------------------------------------
 # Model performance (expander, not front-and-center)
 # ---------------------------------------------------------------

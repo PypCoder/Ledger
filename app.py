@@ -5,6 +5,7 @@ A calibrated, monotonicity-constrained ensemble for loan approval decisions.
 
 import streamlit as st
 import pandas as pd
+import time
 
 import theme
 from preprocessing import preprocess_single_input
@@ -139,10 +140,11 @@ if predict_clicked:
     )
 
     def play_sound(url: str):
+        unique_url = f"{url}?t={time.time()}"
         st.markdown(
             f"""
                 <audio autoplay hidden>
-                   <source src="{url}" type="audio/mp3">
+                   <source src="{unique_url}" type="audio/mp3">
                 </audio>
             """,
             unsafe_allow_html=True
@@ -153,7 +155,7 @@ if predict_clicked:
         play_sound("https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3")  # Success chime
     else:
         st.snow()
-        play_sound("https://assets.mixkit.co/active_storage/sfx/2670/2670-preview.mp3")  # Whistle/Wind sound effect
+        play_sound("https://assets.mixkit.co/active_storage/sfx/2955/2955-preview.mp3")  # Clean negative / rejection tone
 
     if is_ensemble:
         st.markdown("### Per-Model Breakdown")

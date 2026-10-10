@@ -139,6 +139,8 @@ if predict_clicked:
     )
     if is_approved:
         st.balloons()
+    else:
+    is_est.snow()
 
     if is_ensemble:
         st.markdown("### Per-Model Breakdown")

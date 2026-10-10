@@ -23,6 +23,8 @@ st.set_page_config(
 
 theme.inject_css(st)
 
+if "eval_id" not in st.session_state:
+    st.session_state.eval_id = 0
 
 @st.cache_resource
 def get_models():
@@ -140,7 +142,7 @@ if predict_clicked:
     )
 
     def play_sound(url: str):
-        unique_url = f"{url}?t={time.time()}"
+        unique_url = f"{url}?t={time.time()}&id={st.session_state.eval_id}"
         st.markdown(
             f"""
                 <audio autoplay hidden>

@@ -17,7 +17,7 @@ from config import (
 
 st.set_page_config(
     page_title="Ledger — Loan Approval Prediction",
-    page_icon="📘",
+    page_icon="​:material/account_balance:",
     layout="centered",
 )
 

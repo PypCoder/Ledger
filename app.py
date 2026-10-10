@@ -75,10 +75,10 @@ with col1:
     person_income = st.number_input("Annual income", 0, 1_000_000, 50_000, step=1000)
     employee_experience = st.number_input("Years of experience", 0, 50, 3)
     home_ownership = st.selectbox("Home ownership", HOME_OWNERSHIP_OPTIONS)
-    loan_amount = st.number_input("Loan amount", 0, 500_000, 10_000, step=500)
+    loan_intent = st.selectbox("Loan intent", LOAN_INTENT_OPTIONS)
 
 with col2:
-    loan_intent = st.selectbox("Loan intent", LOAN_INTENT_OPTIONS)
+    loan_amount = st.number_input("Loan amount", 0, 500_000, 10_000, step=500)
     loan_interest_rate = st.number_input("Loan interest rate (%)", 0.0, 40.0, 12.0, step=0.1)
     loan_percentage = round(loan_amount / person_income, 2) if person_income > 0 else 0.0
     st.markdown(

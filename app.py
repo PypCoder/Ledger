@@ -80,7 +80,11 @@ with col1:
 with col2:
     loan_intent = st.selectbox("Loan intent", LOAN_INTENT_OPTIONS)
     loan_interest_rate = st.number_input("Loan interest rate (%)", 0.0, 40.0, 12.0, step=0.1)
-    loan_percentage = st.number_input("Loan as % of income", 0.0, 2.0, 0.2, step=0.01)
+    loan_percentage = round(loan_amount / person_income, 2) if person_income > 0 else 0.0
+    st.markdown(
+         f'<p class="ledger-caption">Loan as % of income: {loan_percentage:.0%} (calculated)</p>',
+         unsafe_allow_html=True,
+    )
     credit_history = st.number_input("Credit history (years)", 0, 30, 5)
     credit_score = st.number_input("Credit score", 300, 850, 650)
     previous_loan = st.selectbox("Previous loan on record", YES_NO_OPTIONS)

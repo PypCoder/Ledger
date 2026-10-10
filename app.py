@@ -137,10 +137,23 @@ if predict_clicked:
         ),
         unsafe_allow_html=True,
     )
+
+    def play_sound(url: str):
+        st.markdown(
+            f"""
+                <audio autoplay hidden>
+                   <source src="{url}" type="audio/mp3">
+                </audio>
+            """,
+            unsafe_allow_html=True
+         )
+
     if is_approved:
         st.balloons()
+        play_sound("https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3")  # Success chime
     else:
         st.snow()
+        play_sound("https://assets.mixkit.co/active_storage/sfx/2670/2670-preview.mp3")  # Whistle/Wind sound effect
 
     if is_ensemble:
         st.markdown("### Per-Model Breakdown")
